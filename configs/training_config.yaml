@@ -1,0 +1,67 @@
+# Training Configuration
+dataset:
+  name: "brain_tumor"
+  source: "huggingface"
+  path: "sartajbhuvaji/Brain-Tumor-Classification"
+  classes: ["glioma", "meningioma", "pituitary", "normal"]
+  image_size: 224
+  batch_size: 32
+  num_workers: 4
+
+split:
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+  random_seed: 42
+
+augmentation:
+  random_horizontal_flip: true
+  random_rotation: 15
+  random_brightness: 0.2
+  random_contrast: 0.2
+  random_zoom: 0.1
+
+resnet:
+  model_name: "resnet50"
+  pretrained: true
+  epochs: 50
+  learning_rate: 0.001
+  batch_size: 32
+  optimizer: "adamw"
+  scheduler: "cosine"
+  weight_decay: 0.0001
+  early_stopping_patience: 10
+
+xgboost:
+  n_estimators: 500
+  max_depth: 8
+  learning_rate: 0.05
+  subsample: 0.8
+  colsample_bytree: 0.8
+  gamma: 0.1
+  reg_alpha: 0.1
+  reg_lambda: 1
+  min_child_weight: 3
+
+random_forest:
+  n_estimators: 500
+  max_depth: 20
+  min_samples_split: 5
+  min_samples_leaf: 2
+  max_features: "sqrt"
+  bootstrap: true
+
+lightgbm:
+  n_estimators: 500
+  max_depth: 10
+  learning_rate: 0.05
+  num_leaves: 31
+  subsample: 0.8
+  colsample_bytree: 0.8
+  reg_alpha: 0.1
+  reg_lambda: 0.1
+
+ensemble:
+  models: ["resnet50", "xgboost", "random_forest", "lightgbm"]
+  weighting_method: "weighted_score"  # weighted_score, voting, stacking
+  weight_formula: "0.7*accuracy + 0.3*confidence"
